@@ -1,6 +1,6 @@
 import {bindable} from "aurelia-framework";
 
-export class DateFormatter {
+export class AuInputDate {
 
   dateObject:Date = new Date();
   @bindable dateString:string = this.dateObject.toJSON().slice(0, 10);

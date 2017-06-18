@@ -1,6 +1,6 @@
 import {bindable} from "aurelia-framework";
 
-export class MoneyFormatter {
+export class AuInputCurrency {
   
   @bindable unformattedValue:string = "3426.1179";
   formattedValue:string;
