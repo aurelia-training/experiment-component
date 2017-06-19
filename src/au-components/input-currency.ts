@@ -1,6 +1,7 @@
-import {bindable} from "aurelia-framework";
+import {bindable, customElement} from "aurelia-framework";
 
-export class AuInputCurrency {
+@customElement("au-input-currency")
+export class InputCurrency {
   
   @bindable unformattedValue:string = "3426.1179";
   formattedValue:string;

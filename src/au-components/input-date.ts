@@ -1,6 +1,7 @@
-import {bindable} from "aurelia-framework";
+import {bindable, customElement} from "aurelia-framework";
 
-export class AuInputDate {
+@customElement("au-input-date")
+export class InputDate {
 
   dateObject:Date = new Date();
   @bindable dateString:string = this.dateObject.toJSON().slice(0, 10);

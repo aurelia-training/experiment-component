@@ -50,15 +50,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-define('au-components/au-input-currency',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
+define('au-components/input-currency',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var AuInputCurrency = (function () {
-        function AuInputCurrency() {
+    var InputCurrency = (function () {
+        function InputCurrency() {
             this.unformattedValue = "3426.1179";
             this.unformattedValueChanged(this.unformattedValue, null);
         }
-        AuInputCurrency.prototype.unformattedValueChanged = function (newValue, oldValue) {
+        InputCurrency.prototype.unformattedValueChanged = function (newValue, oldValue) {
             var match = /(\d+)(\.\d+)?/.exec(newValue);
             if (match == null) {
                 this.formattedValue = "Invalid number";
@@ -71,13 +71,17 @@ define('au-components/au-input-currency',["require", "exports", "aurelia-framewo
             }
             this.formattedValue = "$" + beforeDecimal + afterDecimal.toString().slice(1);
         };
-        return AuInputCurrency;
+        return InputCurrency;
     }());
     __decorate([
         aurelia_framework_1.bindable,
         __metadata("design:type", String)
-    ], AuInputCurrency.prototype, "unformattedValue", void 0);
-    exports.AuInputCurrency = AuInputCurrency;
+    ], InputCurrency.prototype, "unformattedValue", void 0);
+    InputCurrency = __decorate([
+        aurelia_framework_1.customElement("au-input-currency"),
+        __metadata("design:paramtypes", [])
+    ], InputCurrency);
+    exports.InputCurrency = InputCurrency;
 });
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -89,16 +93,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-define('au-components/au-input-date',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
+define('au-components/input-date',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var AuInputDate = (function () {
-        function AuInputDate() {
+    var InputDate = (function () {
+        function InputDate() {
             this.dateObject = new Date();
             this.dateString = this.dateObject.toJSON().slice(0, 10);
             this.dateStringChanged(this.dateString, null);
         }
-        AuInputDate.prototype.dateStringChanged = function (newValue, oldValue) {
+        InputDate.prototype.dateStringChanged = function (newValue, oldValue) {
             this.dateObject = new Date(newValue);
             var date = ("0" + this.dateObject.getDate()).slice(-2);
             var month = ("0" + (this.dateObject.getMonth() + 1)).slice(-2);
@@ -107,13 +111,17 @@ define('au-components/au-input-date',["require", "exports", "aurelia-framework"]
             this.dateDDMM = date + " " + month;
             this.dateYYYY = "" + year;
         };
-        return AuInputDate;
+        return InputDate;
     }());
     __decorate([
         aurelia_framework_1.bindable,
         __metadata("design:type", String)
-    ], AuInputDate.prototype, "dateString", void 0);
-    exports.AuInputDate = AuInputDate;
+    ], InputDate.prototype, "dateString", void 0);
+    InputDate = __decorate([
+        aurelia_framework_1.customElement("au-input-date"),
+        __metadata("design:paramtypes", [])
+    ], InputDate);
+    exports.InputDate = InputDate;
 });
 
 define('resources/index',["require", "exports"], function (require, exports) {
@@ -124,7 +132,7 @@ define('resources/index',["require", "exports"], function (require, exports) {
     exports.configure = configure;
 });
 
-define('text!app.html', ['module'], function(module) { module.exports = "<template>\n\n  <require from=\"./au-components/au-input-currency\"></require>\n  <require from=\"./au-components/au-input-date\"></require>\n\n  <au-input-currency></au-input-currency>\n  <au-input-date></au-input-date>\n\n</template>\n"; });
-define('text!au-components/au-input-currency.html', ['module'], function(module) { module.exports = "<template>\n  \n  <input type=\"number\" value.bind=\"unformattedValue\" step=\"any\" />\n  <p>${unformattedValue} &rarr; ${formattedValue}</p>\n\n</template>\n"; });
-define('text!au-components/au-input-date.html', ['module'], function(module) { module.exports = "<template>\n\n  <input type=\"date\" value.bind=\"dateString\" />\n  <p>Date MM/DD/YYYY: ${dateMMDDYYYY}</p>\n  <p>Date DD MM: ${dateDDMM}</p>\n  <p>Date YYYY: ${dateYYYY}</p>\n\n</template>\n"; });
+define('text!app.html', ['module'], function(module) { module.exports = "<template>\n\n  <require from=\"./au-components/input-currency\"></require>\n  <require from=\"./au-components/input-date\"></require>\n\n  <au-input-currency></au-input-currency>\n  <au-input-date></au-input-date>\n\n</template>\n"; });
+define('text!au-components/input-currency.html', ['module'], function(module) { module.exports = "<template>\n  \n  <input type=\"text\" value.bind=\"formattedValue\" step=\"any\" />\n  <p>Internal Variable: ${unformattedValue}</p>\n  <p>Formatted Version: ${formattedValue}</p>\n\n</template>\n"; });
+define('text!au-components/input-date.html', ['module'], function(module) { module.exports = "<template>\n\n  <input type=\"date\" value.bind=\"dateString\" />\n  <p>Date MM/DD/YYYY: ${dateMMDDYYYY}</p>\n  <p>Date DD MM: ${dateDDMM}</p>\n  <p>Date YYYY: ${dateYYYY}</p>\n\n</template>\n"; });
 //# sourceMappingURL=app-bundle.js.map
