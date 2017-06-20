@@ -75,7 +75,7 @@ define('au-components/input-currency',["require", "exports", "aurelia-framework"
             this.formattedValue = "$" + beforeDecimal + afterDecimal.toString().slice(1);
         };
         InputCurrency.prototype.updateUnformattedValue = function () {
-            var unformattedNumber = this.formattedValue.replace(/\,\$/g, "");
+            var unformattedNumber = this.formattedValue.replace(/[\,\$]/g, "");
             if (/^\d+(\.\d+)?$/.exec(unformattedNumber) !== null) {
                 this.unformattedValue = parseFloat(unformattedNumber);
             }
