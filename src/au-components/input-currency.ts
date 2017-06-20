@@ -27,7 +27,7 @@ export class InputCurrency {
   }
 
   updateUnformattedValue() {
-    let unformattedNumber = this.formattedValue.replace(/\,\$/g, "");
+    let unformattedNumber = this.formattedValue.replace(/[\,\$]/g, "");
     if(/^\d+(\.\d+)?$/.exec(unformattedNumber) !== null) {
       this.unformattedValue = parseFloat(unformattedNumber);
     } else {
