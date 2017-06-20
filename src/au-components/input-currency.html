@@ -1,6 +1,6 @@
 <template>
   
-  <input type="text" value.bind="formattedValue" step="any" />
+  <input type="text" value.two-way="formattedValue" blur.trigger="updateUnformattedValue()" step="any" />
   <p>Internal Variable: ${unformattedValue}</p>
   <p>Formatted Version: ${formattedValue}</p>
 

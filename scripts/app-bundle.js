@@ -3,6 +3,9 @@ define('app',["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var App = (function () {
         function App() {
+            this.whenPaid = new Date();
+            this.amountPaid = 237.47;
+            this.testDataItem = "TEST DEPENDENCY INJECTION";
         }
         return App;
     }());
@@ -55,12 +58,12 @@ define('au-components/input-currency',["require", "exports", "aurelia-framework"
     Object.defineProperty(exports, "__esModule", { value: true });
     var InputCurrency = (function () {
         function InputCurrency() {
-            this.unformattedValue = "3426.1179";
+            this.unformattedValue = 3426.1179;
             this.unformattedValueChanged(this.unformattedValue, null);
         }
         InputCurrency.prototype.unformattedValueChanged = function (newValue, oldValue) {
-            var match = /(\d+)(\.\d+)?/.exec(newValue);
-            if (match == null) {
+            var match = /(\d+)(\.\d+)?/.exec(newValue.toString());
+            if (match === null) {
                 this.formattedValue = "Invalid number";
                 return;
             }
@@ -71,11 +74,20 @@ define('au-components/input-currency',["require", "exports", "aurelia-framework"
             }
             this.formattedValue = "$" + beforeDecimal + afterDecimal.toString().slice(1);
         };
+        InputCurrency.prototype.updateUnformattedValue = function () {
+            var unformattedNumber = this.formattedValue.replace(/\,\$/g, "");
+            if (/^\d+(\.\d+)?$/.exec(unformattedNumber) !== null) {
+                this.unformattedValue = parseFloat(unformattedNumber);
+            }
+            else {
+                this.unformattedValueChanged(this.unformattedValue, null);
+            }
+        };
         return InputCurrency;
     }());
     __decorate([
         aurelia_framework_1.bindable,
-        __metadata("design:type", String)
+        __metadata("design:type", Object)
     ], InputCurrency.prototype, "unformattedValue", void 0);
     InputCurrency = __decorate([
         aurelia_framework_1.customElement("au-input-currency"),
@@ -132,7 +144,35 @@ define('resources/index',["require", "exports"], function (require, exports) {
     exports.configure = configure;
 });
 
-define('text!app.html', ['module'], function(module) { module.exports = "<template>\n\n  <require from=\"./au-components/input-currency\"></require>\n  <require from=\"./au-components/input-date\"></require>\n\n  <au-input-currency></au-input-currency>\n  <au-input-date></au-input-date>\n\n</template>\n"; });
-define('text!au-components/input-currency.html', ['module'], function(module) { module.exports = "<template>\n  \n  <input type=\"text\" value.bind=\"formattedValue\" step=\"any\" />\n  <p>Internal Variable: ${unformattedValue}</p>\n  <p>Formatted Version: ${formattedValue}</p>\n\n</template>\n"; });
-define('text!au-components/input-date.html', ['module'], function(module) { module.exports = "<template>\n\n  <input type=\"date\" value.bind=\"dateString\" />\n  <p>Date MM/DD/YYYY: ${dateMMDDYYYY}</p>\n  <p>Date DD MM: ${dateDDMM}</p>\n  <p>Date YYYY: ${dateYYYY}</p>\n\n</template>\n"; });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('au-components/di-experiment',["require", "exports", "aurelia-framework", "../app"], function (require, exports, aurelia_framework_1, app_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var DiExperiment = (function () {
+        function DiExperiment(app) {
+            this.app = app;
+            this.formattedTestDataItem = "*** " + this.app.testDataItem + " ***";
+        }
+        return DiExperiment;
+    }());
+    DiExperiment = __decorate([
+        aurelia_framework_1.customElement("au-di-experiment"),
+        aurelia_framework_1.inject(app_1.App),
+        __metadata("design:paramtypes", [app_1.App])
+    ], DiExperiment);
+    exports.DiExperiment = DiExperiment;
+});
+
+define('text!app.html', ['module'], function(module) { module.exports = "<template>\n\n  <require from=\"./au-components/input-currency\"></require>\n  <require from=\"./au-components/input-date\"></require>\n  <require from=\"./au-components/di-experiment\"></require>\n\n  <au-input-currency></au-input-currency>\n  <au-input-date></au-input-date>\n  <au-di-experiment></au-di-experiment>\n\n</template>\n"; });
+define('text!au-components/input-currency.html', ['module'], function(module) { module.exports = "<template>\n  \n  <input type=\"text\" value.two-way=\"formattedValue\" blur.trigger=\"updateUnformattedValue()\" step=\"any\" />\n  <p>Internal Variable: ${unformattedValue}</p>\n  <p>Formatted Version: ${formattedValue}</p>\n\n</template>\n"; });
+define('text!au-components/input-date.html', ['module'], function(module) { module.exports = "<template>\n\n  <input type=\"date\" value.two-way=\"dateString\" />\n  <p>Date MM/DD/YYYY: ${dateMMDDYYYY}</p>\n  <p>Date DD MM: ${dateDDMM}</p>\n  <p>Date YYYY: ${dateYYYY}</p>\n\n</template>\n"; });
+define('text!au-components/di-experiment.html', ['module'], function(module) { module.exports = "<template>\n  <p>${formattedTestDataItem}</p>\n</template>\n"; });
 //# sourceMappingURL=app-bundle.js.map
