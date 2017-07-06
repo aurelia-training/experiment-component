@@ -146,8 +146,8 @@ define('au-components/input-date',["require", "exports", "aurelia-framework"], f
                 year: "numeric"
             };
             this.dateMMDDYYYY = new Intl.DateTimeFormat("en-US", dateMMDDYYYYOptions).format(this.dateObject);
-            var dateDDMMParts = new Intl.DateTimeFormat("en-US", dateDDMMOptions).formatToParts(this.dateObject);
-            this.dateDDMM = dateDDMMParts[2].value + " " + dateDDMMParts[0].value;
+            var dateDDMMParts = new Intl.DateTimeFormat("en-US", dateDDMMOptions).format(this.dateObject);
+            this.dateDDMM = dateDDMMParts.slice(3, 5) + " " + dateDDMMParts.slice(0, 2);
             this.dateYYYY = new Intl.DateTimeFormat("en-US", dateYYYYOptions).format(this.dateObject);
         };
         return InputDate;
