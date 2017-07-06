@@ -53,6 +53,33 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+define('au-components/di-experiment',["require", "exports", "aurelia-framework", "../app"], function (require, exports, aurelia_framework_1, app_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var DiExperiment = (function () {
+        function DiExperiment(app) {
+            this.app = app;
+            this.formattedTestDataItem = "*** " + this.app.testDataItem + " ***";
+        }
+        return DiExperiment;
+    }());
+    DiExperiment = __decorate([
+        aurelia_framework_1.customElement("au-di-experiment"),
+        aurelia_framework_1.inject(app_1.App),
+        __metadata("design:paramtypes", [app_1.App])
+    ], DiExperiment);
+    exports.DiExperiment = DiExperiment;
+});
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 define('au-components/input-currency',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -62,17 +89,7 @@ define('au-components/input-currency',["require", "exports", "aurelia-framework"
             this.unformattedValueChanged(this.unformattedValue, null);
         }
         InputCurrency.prototype.unformattedValueChanged = function (newValue, oldValue) {
-            var match = /(\d+)(\.\d+)?/.exec(newValue.toString());
-            if (match === null) {
-                this.formattedValue = "Invalid number";
-                return;
-            }
-            var afterDecimal = parseFloat(match[2] || "0").toFixed(2);
-            var beforeDecimal = match[1];
-            for (var i = beforeDecimal.length - 3; i > 0; i -= 3) {
-                beforeDecimal = beforeDecimal.slice(0, i) + "," + beforeDecimal.slice(i);
-            }
-            this.formattedValue = "$" + beforeDecimal + afterDecimal.toString().slice(1);
+            this.formattedValue = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(newValue.toString());
         };
         InputCurrency.prototype.updateUnformattedValue = function () {
             var unformattedNumber = this.formattedValue.replace(/[\,\$]/g, "");
@@ -116,12 +133,22 @@ define('au-components/input-date',["require", "exports", "aurelia-framework"], f
         }
         InputDate.prototype.dateStringChanged = function (newValue, oldValue) {
             this.dateObject = new Date(newValue);
-            var date = ("0" + this.dateObject.getDate()).slice(-2);
-            var month = ("0" + (this.dateObject.getMonth() + 1)).slice(-2);
-            var year = this.dateObject.getFullYear();
-            this.dateMMDDYYYY = month + "/" + date + "/" + year;
-            this.dateDDMM = date + " " + month;
-            this.dateYYYY = "" + year;
+            var dateMMDDYYYYOptions = {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit"
+            };
+            var dateDDMMOptions = {
+                month: "2-digit",
+                day: "2-digit"
+            };
+            var dateYYYYOptions = {
+                year: "numeric"
+            };
+            this.dateMMDDYYYY = new Intl.DateTimeFormat("en-US", dateMMDDYYYYOptions).format(this.dateObject);
+            var dateDDMMParts = new Intl.DateTimeFormat("en-US", dateDDMMOptions).formatToParts(this.dateObject);
+            this.dateDDMM = dateDDMMParts[2].value + " " + dateDDMMParts[0].value;
+            this.dateYYYY = new Intl.DateTimeFormat("en-US", dateYYYYOptions).format(this.dateObject);
         };
         return InputDate;
     }());
@@ -144,35 +171,8 @@ define('resources/index',["require", "exports"], function (require, exports) {
     exports.configure = configure;
 });
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-define('au-components/di-experiment',["require", "exports", "aurelia-framework", "../app"], function (require, exports, aurelia_framework_1, app_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var DiExperiment = (function () {
-        function DiExperiment(app) {
-            this.app = app;
-            this.formattedTestDataItem = "*** " + this.app.testDataItem + " ***";
-        }
-        return DiExperiment;
-    }());
-    DiExperiment = __decorate([
-        aurelia_framework_1.customElement("au-di-experiment"),
-        aurelia_framework_1.inject(app_1.App),
-        __metadata("design:paramtypes", [app_1.App])
-    ], DiExperiment);
-    exports.DiExperiment = DiExperiment;
-});
-
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n\n  <require from=\"./au-components/input-currency\"></require>\n  <require from=\"./au-components/input-date\"></require>\n  <require from=\"./au-components/di-experiment\"></require>\n\n  <au-input-currency></au-input-currency>\n  <au-input-date></au-input-date>\n  <au-di-experiment></au-di-experiment>\n\n</template>\n"; });
+define('text!au-components/di-experiment.html', ['module'], function(module) { module.exports = "<template>\n  <p>${formattedTestDataItem}</p>\n</template>\n"; });
 define('text!au-components/input-currency.html', ['module'], function(module) { module.exports = "<template>\n  \n  <input type=\"text\" value.two-way=\"formattedValue\" blur.trigger=\"updateUnformattedValue()\" step=\"any\" />\n  <p>Internal Variable: ${unformattedValue}</p>\n  <p>Formatted Version: ${formattedValue}</p>\n\n</template>\n"; });
 define('text!au-components/input-date.html', ['module'], function(module) { module.exports = "<template>\n\n  <input type=\"date\" value.two-way=\"dateString\" />\n  <p>Date MM/DD/YYYY: ${dateMMDDYYYY}</p>\n  <p>Date DD MM: ${dateDDMM}</p>\n  <p>Date YYYY: ${dateYYYY}</p>\n\n</template>\n"; });
-define('text!au-components/di-experiment.html', ['module'], function(module) { module.exports = "<template>\n  <p>${formattedTestDataItem}</p>\n</template>\n"; });
 //# sourceMappingURL=app-bundle.js.map

@@ -11,13 +11,24 @@ export class InputDate {
 
   dateStringChanged(newValue, oldValue) {
     this.dateObject = new Date(newValue);
-    let date = ("0" + this.dateObject.getDate()).slice(-2);
-    let month = ("0" + (this.dateObject.getMonth() + 1)).slice(-2); // month is zero-indexed
-    let year = this.dateObject.getFullYear();
 
-    this.dateMMDDYYYY = month + "/" + date + "/" + year;
-    this.dateDDMM = date + " " + month;
-    this.dateYYYY = "" + year;
+    let dateMMDDYYYYOptions = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    };
+    let dateDDMMOptions = {
+      month: "2-digit",
+      day: "2-digit"
+    };
+    let dateYYYYOptions = {
+      year: "numeric"
+    };
+
+    this.dateMMDDYYYY = new Intl.DateTimeFormat("en-US", dateMMDDYYYYOptions).format(this.dateObject);
+    let dateDDMMParts = new Intl.DateTimeFormat("en-US", dateDDMMOptions).formatToParts(this.dateObject);
+    this.dateDDMM = dateDDMMParts[2].value + " " + dateDDMMParts[0].value;
+    this.dateYYYY = new Intl.DateTimeFormat("en-US", dateYYYYOptions).format(this.dateObject);
   }
 
   constructor() {
