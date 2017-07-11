@@ -24,7 +24,7 @@ export class InputCurrency {
 
   // disabled check
   @bindable
-  public disabled:string = "false";
+  public disabled:boolean;
 
   // inject App, setup link
   constructor(private app:App) {}
@@ -41,7 +41,7 @@ export class InputCurrency {
     if(this.inputElement === undefined) {
       return;
     }
-    if(this.disabled === "true") {
+    if(this.disabled === true) {
       this.inputElement.setAttribute("disabled", "disabled");
     } else {
       this.inputElement.removeAttribute("disabled");

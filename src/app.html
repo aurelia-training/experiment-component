@@ -4,8 +4,22 @@
   <require from="./au-components/input-date"></require>
   <require from="./au-components/di-experiment"></require>
 
-  <au-input-currency data-name="number1" disabled="false"></au-input-currency>
+  <!-- au-input-currency test block -->
+  <div>
+    <au-input-currency data-name.two-way="dataName" disabled.two-way="isDisabled"></au-input-currency>
+    Value to choose from: 
+    <select value.two-way="dataName">
+      <option repeat.for="name of dataKeys" value="${name}">${data[name]}</option>
+    </select>
+    Disabled? 
+    <input type="checkbox" checked.two-way="isDisabled" />
+  </div>
+  <hr />
+
   <au-input-date></au-input-date>
+
+  <hr />
+
   <au-di-experiment></au-di-experiment>
 
 </template>

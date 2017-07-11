@@ -1,4 +1,13 @@
-define('app',["require", "exports"], function (require, exports) {
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('app',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var App = (function () {
@@ -7,12 +16,25 @@ define('app',["require", "exports"], function (require, exports) {
             this.amountPaid = 237.47;
             this.testDataItem = "TEST DEPENDENCY INJECTION";
             this.data = {
-                number1: 32.123,
-                number2: 2321.32
+                number1: -532.12,
+                number2: 2321.32,
+                number3: 321.24,
+                number5: 0,
+                number6: -Math.PI
             };
+            this.dataKeys = Object.keys(this.data);
+            this.isDisabled = false;
+            this.dataName = "number1";
         }
+        App.prototype.dataChanged = function () {
+            this.dataKeys = Object.keys(this.data);
+        };
         return App;
     }());
+    __decorate([
+        aurelia_framework_1.bindable,
+        __metadata("design:type", Object)
+    ], App.prototype, "data", void 0);
     exports.App = App;
 });
 
@@ -91,7 +113,6 @@ define('au-components/input-currency',["require", "exports", "aurelia-framework"
         function InputCurrency(app) {
             this.app = app;
             this.error = false;
-            this.disabled = "false";
         }
         InputCurrency.prototype.dataNameChanged = function () {
             if (this.inputElement === undefined) {
@@ -104,7 +125,7 @@ define('au-components/input-currency',["require", "exports", "aurelia-framework"
             if (this.inputElement === undefined) {
                 return;
             }
-            if (this.disabled === "true") {
+            if (this.disabled === true) {
                 this.inputElement.setAttribute("disabled", "disabled");
             }
             else {
@@ -172,7 +193,7 @@ define('au-components/input-currency',["require", "exports", "aurelia-framework"
     ], InputCurrency.prototype, "externalValue", void 0);
     __decorate([
         aurelia_framework_1.bindable,
-        __metadata("design:type", String)
+        __metadata("design:type", Boolean)
     ], InputCurrency.prototype, "disabled", void 0);
     InputCurrency = InputCurrency_1 = __decorate([
         aurelia_framework_1.customElement("au-input-currency"),
@@ -261,7 +282,7 @@ define('resources/index',["require", "exports"], function (require, exports) {
     exports.configure = configure;
 });
 
-define('text!app.html', ['module'], function(module) { module.exports = "<template>\n\n  <require from=\"./au-components/input-currency\"></require>\n  <require from=\"./au-components/input-date\"></require>\n  <require from=\"./au-components/di-experiment\"></require>\n\n  <au-input-currency data-name=\"number1\" disabled=\"false\"></au-input-currency>\n  <au-input-date></au-input-date>\n  <au-di-experiment></au-di-experiment>\n\n</template>\n"; });
+define('text!app.html', ['module'], function(module) { module.exports = "<template>\n\n  <require from=\"./au-components/input-currency\"></require>\n  <require from=\"./au-components/input-date\"></require>\n  <require from=\"./au-components/di-experiment\"></require>\n\n  <!-- au-input-currency test block -->\n  <div>\n    <au-input-currency data-name.two-way=\"dataName\" disabled.two-way=\"isDisabled\"></au-input-currency>\n    Value to choose from: \n    <select value.two-way=\"dataName\">\n      <option repeat.for=\"name of dataKeys\" value=\"${name}\">${data[name]}</option>\n    </select>\n    Disabled? \n    <input type=\"checkbox\" checked.two-way=\"isDisabled\" />\n  </div>\n  <hr />\n\n  <au-input-date></au-input-date>\n\n  <hr />\n\n  <au-di-experiment></au-di-experiment>\n\n</template>\n"; });
 define('text!au-components/di-experiment.html', ['module'], function(module) { module.exports = "<template>\n  <p>${formattedTestDataItem}</p>\n</template>\n"; });
 define('text!au-components/input-currency.html', ['module'], function(module) { module.exports = "<template>\n\n  <input type=\"text\"\n         ref=\"inputElement\"\n         input.trigger=\"validate()\"\n         value.one-time=\"externalValue\"\n         blur.trigger=\"updateInternal()\"\n         class.one-way=\"error ? 'inputCurrencyError' : ''\" />\n\n  <!-- just for testing -->\n  <p>Internal value: ${externalValue}; Internal value: ${app.data[dataName]}</p>\n  <style>\n    .inputCurrencyError { outline: 2px solid red; }\n  </style>\n  \n</template>\n"; });
 define('text!au-components/input-date.html', ['module'], function(module) { module.exports = "<template>\n\n  <input type=\"date\" value.two-way=\"dateString\" />\n  <p>Date MM/DD/YYYY: ${dateMMDDYYYY}</p>\n  <p>Date DD MM: ${dateDDMM}</p>\n  <p>Date YYYY: ${dateYYYY}</p>\n\n</template>\n"; });
