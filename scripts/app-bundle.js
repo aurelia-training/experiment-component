@@ -6,6 +6,10 @@ define('app',["require", "exports"], function (require, exports) {
             this.whenPaid = new Date();
             this.amountPaid = 237.47;
             this.testDataItem = "TEST DEPENDENCY INJECTION";
+            this.data = {
+                number1: 32.123,
+                number2: 2321.32
+            };
         }
         return App;
     }());
@@ -80,37 +84,103 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-define('au-components/input-currency',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
+define('au-components/input-currency',["require", "exports", "aurelia-framework", "../app"], function (require, exports, aurelia_framework_1, app_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var InputCurrency = (function () {
-        function InputCurrency() {
-            this.unformattedValue = 3426.1179;
-            this.unformattedValueChanged(this.unformattedValue, null);
+    var InputCurrency = InputCurrency_1 = (function () {
+        function InputCurrency(app) {
+            this.app = app;
+            this.error = false;
+            this.disabled = "false";
         }
-        InputCurrency.prototype.unformattedValueChanged = function (newValue, oldValue) {
-            this.formattedValue = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(newValue.toString());
+        InputCurrency.prototype.dataNameChanged = function () {
+            if (this.inputElement === undefined) {
+                return;
+            }
+            this.inputElement.value = this.format(this.app.data[this.dataName]);
+            this.validate();
         };
-        InputCurrency.prototype.updateUnformattedValue = function () {
-            var unformattedNumber = this.formattedValue.replace(/[\,\$]/g, "");
-            if (/^\d+(\.\d+)?$/.exec(unformattedNumber) !== null) {
-                this.unformattedValue = parseFloat(unformattedNumber);
+        InputCurrency.prototype.disabledChanged = function () {
+            if (this.inputElement === undefined) {
+                return;
+            }
+            if (this.disabled === "true") {
+                this.inputElement.setAttribute("disabled", "disabled");
             }
             else {
-                this.unformattedValueChanged(this.unformattedValue, null);
+                this.inputElement.removeAttribute("disabled");
+            }
+        };
+        InputCurrency.prototype.attached = function () {
+            this.dataNameChanged();
+            this.disabledChanged();
+        };
+        InputCurrency.prototype.format = function (number) {
+            return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(number);
+        };
+        InputCurrency.prototype.unformat = function (string) {
+            return parseFloat(string.replace(InputCurrency_1.nonNumericRegex, ""));
+        };
+        InputCurrency.prototype.validate = function () {
+            var selectionStart = this.inputElement.selectionStart - (this.inputElement.value.slice(0, this.inputElement.selectionStart).match(InputCurrency_1.nonNumericRegex) || []).length;
+            var numericValue = this.unformat(this.inputElement.value);
+            if (isNaN(numericValue)) {
+                this.error = true;
+            }
+            else {
+                if (numericValue > 1e12) {
+                    numericValue = 1e12;
+                }
+                if (numericValue < -1e12) {
+                    numericValue = -1e12;
+                }
+                this.externalValue = "";
+                this.externalValue = this.format(numericValue);
+                this.error = false;
+                this.inputElement.value = this.externalValue;
+                var selectionStartWithSymbols = 0;
+                while (selectionStart > 0) {
+                    if (InputCurrency_1.nonNumericRegex.exec(this.externalValue.charAt(selectionStartWithSymbols++)) === null) {
+                        selectionStart--;
+                    }
+                    if (selectionStartWithSymbols >= this.externalValue.length) {
+                        break;
+                    }
+                }
+                this.inputElement.setSelectionRange(selectionStartWithSymbols, selectionStartWithSymbols);
+            }
+        };
+        InputCurrency.prototype.updateInternal = function () {
+            if (!this.error) {
+                this.app.data[this.dataName] = this.unformat(this.externalValue);
+            }
+            else {
+                this.inputElement.value = this.format(this.app.data[this.dataName]);
+                this.validate();
             }
         };
         return InputCurrency;
     }());
+    InputCurrency.nonNumericRegex = /[^\-0-9\.]/g;
     __decorate([
         aurelia_framework_1.bindable,
-        __metadata("design:type", Object)
-    ], InputCurrency.prototype, "unformattedValue", void 0);
-    InputCurrency = __decorate([
+        __metadata("design:type", String)
+    ], InputCurrency.prototype, "dataName", void 0);
+    __decorate([
+        aurelia_framework_1.bindable,
+        __metadata("design:type", String)
+    ], InputCurrency.prototype, "externalValue", void 0);
+    __decorate([
+        aurelia_framework_1.bindable,
+        __metadata("design:type", String)
+    ], InputCurrency.prototype, "disabled", void 0);
+    InputCurrency = InputCurrency_1 = __decorate([
         aurelia_framework_1.customElement("au-input-currency"),
-        __metadata("design:paramtypes", [])
+        aurelia_framework_1.inject(app_1.App),
+        __metadata("design:paramtypes", [app_1.App])
     ], InputCurrency);
     exports.InputCurrency = InputCurrency;
+    var InputCurrency_1;
 });
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -163,6 +233,26 @@ define('au-components/input-date',["require", "exports", "aurelia-framework"], f
     exports.InputDate = InputDate;
 });
 
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+define('au-converters/ToFromValidate',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var ToFromValidate = (function () {
+        function ToFromValidate() {
+        }
+        return ToFromValidate;
+    }());
+    ToFromValidate = __decorate([
+        aurelia_framework_1.valueConverter("toFromValidate")
+    ], ToFromValidate);
+    exports.ToFromValidate = ToFromValidate;
+});
+
 define('resources/index',["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -171,8 +261,8 @@ define('resources/index',["require", "exports"], function (require, exports) {
     exports.configure = configure;
 });
 
-define('text!app.html', ['module'], function(module) { module.exports = "<template>\n\n  <require from=\"./au-components/input-currency\"></require>\n  <require from=\"./au-components/input-date\"></require>\n  <require from=\"./au-components/di-experiment\"></require>\n\n  <au-input-currency></au-input-currency>\n  <au-input-date></au-input-date>\n  <au-di-experiment></au-di-experiment>\n\n</template>\n"; });
+define('text!app.html', ['module'], function(module) { module.exports = "<template>\n\n  <require from=\"./au-components/input-currency\"></require>\n  <require from=\"./au-components/input-date\"></require>\n  <require from=\"./au-components/di-experiment\"></require>\n\n  <au-input-currency data-name=\"number1\" disabled=\"false\"></au-input-currency>\n  <au-input-date></au-input-date>\n  <au-di-experiment></au-di-experiment>\n\n</template>\n"; });
 define('text!au-components/di-experiment.html', ['module'], function(module) { module.exports = "<template>\n  <p>${formattedTestDataItem}</p>\n</template>\n"; });
-define('text!au-components/input-currency.html', ['module'], function(module) { module.exports = "<template>\n  \n  <input type=\"text\" value.two-way=\"formattedValue\" blur.trigger=\"updateUnformattedValue()\" step=\"any\" />\n  <p>Internal Variable: ${unformattedValue}</p>\n  <p>Formatted Version: ${formattedValue}</p>\n\n</template>\n"; });
+define('text!au-components/input-currency.html', ['module'], function(module) { module.exports = "<template>\n\n  <input type=\"text\"\n         ref=\"inputElement\"\n         input.trigger=\"validate()\"\n         value.one-time=\"externalValue\"\n         blur.trigger=\"updateInternal()\"\n         class.one-way=\"error ? 'inputCurrencyError' : ''\" />\n\n  <!-- just for testing -->\n  <p>Internal value: ${externalValue}; Internal value: ${app.data[dataName]}</p>\n  <style>\n    .inputCurrencyError { outline: 2px solid red; }\n  </style>\n  \n</template>\n"; });
 define('text!au-components/input-date.html', ['module'], function(module) { module.exports = "<template>\n\n  <input type=\"date\" value.two-way=\"dateString\" />\n  <p>Date MM/DD/YYYY: ${dateMMDDYYYY}</p>\n  <p>Date DD MM: ${dateDDMM}</p>\n  <p>Date YYYY: ${dateYYYY}</p>\n\n</template>\n"; });
 //# sourceMappingURL=app-bundle.js.map

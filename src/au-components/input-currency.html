@@ -1,7 +1,16 @@
 <template>
-  
-  <input type="text" value.two-way="formattedValue" blur.trigger="updateUnformattedValue()" step="any" />
-  <p>Internal Variable: ${unformattedValue}</p>
-  <p>Formatted Version: ${formattedValue}</p>
 
+  <input type="text"
+         ref="inputElement"
+         input.trigger="validate()"
+         value.one-time="externalValue"
+         blur.trigger="updateInternal()"
+         class.one-way="error ? 'inputCurrencyError' : ''" />
+
+  <!-- just for testing -->
+  <p>Internal value: ${externalValue}; Internal value: ${app.data[dataName]}</p>
+  <style>
+    .inputCurrencyError { outline: 2px solid red; }
+  </style>
+  
 </template>
