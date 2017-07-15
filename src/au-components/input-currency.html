@@ -3,12 +3,13 @@
   <input type="text"
          ref="inputElement"
          input.trigger="validate()"
+         keyup.trigger="checkIfEnter($event)"
          value.one-time="externalValue"
          blur.trigger="updateInternal()"
          class.one-way="error ? 'inputCurrencyError' : ''" />
 
   <!-- just for testing -->
-  <p>External value: ${externalValue}; Internal value: ${app.data[dataName]}</p>
+  <p>External value: ${externalValue}; Internal value: ${data}</p>
   <style>
     .inputCurrencyError { outline: 1px solid red; }
   </style>

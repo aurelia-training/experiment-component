@@ -6,13 +6,19 @@
 
   <!-- au-input-currency test block -->
   <div>
-    <au-input-currency data-name.two-way="dataName" disabled.two-way="isDisabled"></au-input-currency>
+    <au-input-currency
+      data.two-way="data[dataName]"
+      disabled.two-way="isDisabled"
+      currency-symbol.two-way="hasCurrencySymbol"
+    ></au-input-currency>
     Value to choose from: 
     <select value.two-way="dataName">
       <option repeat.for="name of dataKeys" value="${name}">${data[name]}</option>
     </select>
     Disabled? 
     <input type="checkbox" checked.two-way="isDisabled" />
+    Currency Symbol:
+    <input type="checkbox" checked.two-way="hasCurrencySymbol" />
   </div>
   <hr />
 

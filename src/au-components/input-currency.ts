@@ -1,13 +1,11 @@
-import {inject, bindable, customElement} from "aurelia-framework";
-import {App} from "../app";
+import {bindable, customElement} from "aurelia-framework";
 
 @customElement("au-input-currency")
-@inject(App)
 export class InputCurrency {
   
-  // name of numerical value in App's data variable
+  // internal numerical data
   @bindable
-  public dataName:string;
+  public data:number;
 
   // value to be displayed (formatted string)
   @bindable
@@ -26,15 +24,16 @@ export class InputCurrency {
   @bindable
   public disabled:boolean;
 
-  // inject App, setup link
-  constructor(private app:App) {}
+  // has currency symbol or not
+  @bindable
+  public currencySymbol:boolean;
 
-  // setup dataName and disabled
-  dataNameChanged() {
+  // setup data and disabled
+  dataChanged() {
     if(this.inputElement === undefined) {
       return;
     }
-    this.inputElement.value = this.format(this.app.data[this.dataName]);
+    this.inputElement.value = this.format(this.data);
     this.validate();
   }
   disabledChanged() {
@@ -47,14 +46,24 @@ export class InputCurrency {
       this.inputElement.removeAttribute("disabled");
     }
   }
+  currencySymbolChanged() {
+    if(this.inputElement === undefined) {
+      return;
+    }
+    this.validate();
+  }
   attached() {
-    this.dataNameChanged();
+    this.dataChanged();
     this.disabledChanged();
   }
 
   // method to format number to formatted string
   format(number:number) {
-    return new Intl.NumberFormat("en-US", {style: "currency", currency: "USD"}).format(number);
+    if(this.currencySymbol === true) {
+      return new Intl.NumberFormat("en-US", {style: "currency", currency: "USD"}).format(number);
+    } else {
+      return new Intl.NumberFormat("en-US", {style: "decimal", minimumIntegerDigits: 1, minimumFractionDigits: 2, maximumFractionDigits: 2}).format(number);
+    }
   }
 
   // method to return numerical value of formatted string
@@ -62,9 +71,15 @@ export class InputCurrency {
     return parseFloat(string.replace(InputCurrency.nonNumericRegex, ""));
   }
 
+  // method to check if enter key has been pressed
+  checkIfEnter(event) {
+    if(event.which === 13) {
+      this.updateInternal();
+    }
+  }
+
   // method to validate input; effectively a value converter
   validate() {
-
     // get selection start before (counts number of numerical numbers before)
     let selectionStart = this.inputElement.selectionStart - (this.inputElement.value.slice(0, this.inputElement.selectionStart).match(InputCurrency.nonNumericRegex) || []).length;
 
@@ -74,6 +89,7 @@ export class InputCurrency {
     // if errorenous (if only non-numerical/no input)
     if(isNaN(numericValue)) {
       this.error = true;
+      this.inputElement.value = "";
     } else {
 
       // set maximum magnitude to 1 trillion / negative 1 trillion (avoid loss of precision)
@@ -113,11 +129,11 @@ export class InputCurrency {
 
     // if no error then set internal value to external value
     if(!this.error) {
-      this.app.data[this.dataName] = this.unformat(this.externalValue);
+      this.data = this.unformat(this.externalValue);
 
     // if error then set external value to internal value
     } else {
-      this.inputElement.value = this.format(this.app.data[this.dataName]);
+      this.inputElement.value = this.format(this.data);
       this.validate();
     }
   }

@@ -18,6 +18,7 @@ export class App {
     this.dataKeys = Object.keys(this.data);
   }
   isDisabled = false;
+  hasCurrencySymbol = true;
   dataName = "number1";
 
 }
