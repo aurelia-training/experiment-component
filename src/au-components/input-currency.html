@@ -3,7 +3,7 @@
   <input type="text"
          ref="inputElement"
          input.trigger="validate()"
-         keyup.trigger="checkIfEnter($event)"
+         keydown.trigger="keydownHandler($event)"
          value.one-time="externalValue"
          blur.trigger="updateInternal()"
          class.one-way="error ? 'inputCurrencyError' : ''" />

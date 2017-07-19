@@ -8,15 +8,15 @@
   <div>
     <au-input-currency
       data.two-way="data[dataName]"
-      disabled.two-way="isDisabled"
+      readonly.two-way="isReadonly"
       currency-symbol.two-way="hasCurrencySymbol"
     ></au-input-currency>
     Value to choose from: 
     <select value.two-way="dataName">
       <option repeat.for="name of dataKeys" value="${name}">${data[name]}</option>
     </select>
-    Disabled? 
-    <input type="checkbox" checked.two-way="isDisabled" />
+    Readonly? 
+    <input type="checkbox" checked.two-way="isReadonly" />
     Currency Symbol:
     <input type="checkbox" checked.two-way="hasCurrencySymbol" />
   </div>

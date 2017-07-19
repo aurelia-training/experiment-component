@@ -20,15 +20,15 @@ export class InputCurrency {
   // regex to test for non-numerical characters (anything that is not a digit, a period, or a negative sign)
   private static nonNumericRegex:RegExp = /[^\-0-9\.]/g;
 
-  // disabled check
+  // readonly check
   @bindable
-  public disabled:boolean;
+  public readonly:boolean;
 
   // has currency symbol or not
   @bindable
   public currencySymbol:boolean;
 
-  // setup data and disabled
+  // setup data and readonly
   dataChanged() {
     if(this.inputElement === undefined) {
       return;
@@ -36,14 +36,14 @@ export class InputCurrency {
     this.inputElement.value = this.format(this.data);
     this.validate();
   }
-  disabledChanged() {
+  readonlyChanged() {
     if(this.inputElement === undefined) {
       return;
     }
-    if(this.disabled === true) {
-      this.inputElement.setAttribute("disabled", "disabled");
+    if(this.readonly === true) {
+      this.inputElement.setAttribute("readonly", "readonly");
     } else {
-      this.inputElement.removeAttribute("disabled");
+      this.inputElement.removeAttribute("readonly");
     }
   }
   currencySymbolChanged() {
@@ -54,7 +54,7 @@ export class InputCurrency {
   }
   attached() {
     this.dataChanged();
-    this.disabledChanged();
+    this.readonlyChanged();
   }
 
   // method to format number to formatted string
@@ -71,11 +71,22 @@ export class InputCurrency {
     return parseFloat(string.replace(InputCurrency.nonNumericRegex, ""));
   }
 
-  // method to check if enter key has been pressed
-  checkIfEnter(event) {
+  // event handler for special keys (backspace before comma/period and enter
+  keydownHandler(event) {
+    // special functionality on right of comma or period
+    if(event.which === 8 && this.inputElement.selectionStart === this.inputElement.selectionEnd) {
+      let cursor = this.inputElement.selectionStart;
+      if(this.inputElement.value.charAt(cursor-1) === "," || this.inputElement.value.charAt(cursor-1) === ".") {
+        this.inputElement.value = this.inputElement.value.slice(0, cursor-2), this.inputElement.value.slice(cursor-1);
+        this.validate();
+        return false;
+      }
+    }
+    // if <Enter> is pressed update internal
     if(event.which === 13) {
       this.updateInternal();
     }
+    return true;
   }
 
   // method to validate input; effectively a value converter
