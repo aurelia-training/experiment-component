@@ -157,7 +157,8 @@ define('au-components/input-currency',["require", "exports", "aurelia-framework"
             if (event.which === 8 && this.inputElement.selectionStart === this.inputElement.selectionEnd) {
                 var cursor = this.inputElement.selectionStart;
                 if (this.inputElement.value.charAt(cursor - 1) === "," || this.inputElement.value.charAt(cursor - 1) === ".") {
-                    this.inputElement.value = this.inputElement.value.slice(0, cursor - 2), this.inputElement.value.slice(cursor - 1);
+                    this.inputElement.value = this.inputElement.value.slice(0, cursor - 2) + this.inputElement.value.slice(cursor - 1);
+                    this.inputElement.setSelectionRange(cursor - 1, cursor - 1);
                     this.validate();
                     return false;
                 }

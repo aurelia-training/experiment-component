@@ -77,7 +77,8 @@ export class InputCurrency {
     if(event.which === 8 && this.inputElement.selectionStart === this.inputElement.selectionEnd) {
       let cursor = this.inputElement.selectionStart;
       if(this.inputElement.value.charAt(cursor-1) === "," || this.inputElement.value.charAt(cursor-1) === ".") {
-        this.inputElement.value = this.inputElement.value.slice(0, cursor-2), this.inputElement.value.slice(cursor-1);
+        this.inputElement.value = this.inputElement.value.slice(0, cursor-2) + this.inputElement.value.slice(cursor-1);
+        this.inputElement.setSelectionRange(cursor-1, cursor-1);
         this.validate();
         return false;
       }
